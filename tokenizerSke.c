@@ -1,3 +1,10 @@
+//Bradley Beltran
+//CS3432
+
+//GitHub
+//jamesb5959/CS3432
+//https://github.com/jamesb5959/CS3432
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -114,7 +121,9 @@ int main()
 {
    char input[] = "Hello,World";
    char *pinput = input;
-   char delim = ',';
+   char delim;
+   printf("Please enter a delimiter char: \n");
+   scanf("%c,", &delim);
    int count = count_tokens(pinput, delim);
 
    char *x = word_start(pinput, delim);

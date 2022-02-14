@@ -20,9 +20,9 @@ bool non_delim_character(char c, char delim){
    word starting with a non-delimiter character. Return a zero pointer if
    str does not contain any words.*/
 char *word_start(char* str,char delim){   
-   char* firstChar = NULL;
-   for (int i = 0; str[i] != '\0'; i++){
-      if(delim_character(str[i],delim) == true && non_delim_character(str[i+1],delim) && str[i+1] != '\0'){
+   char* firstChar = '\0';
+   for (int i = 0; str[i+1] != '\0'; i++){
+      if(delim_character(str[i],delim) == true && non_delim_character(str[i+1],delim)){
          firstChar = &str[i+1];
       }
    }
@@ -44,8 +44,11 @@ char *end_word(char* str,char delim){
 /* Counts the number of words or tokens*/
 int count_tokens(char* str,char delim){
    int count = 0;
-   for (int i = 0;str[i] != '\0';i++){
-      if (delim_character(str[i],delim) && non_delim_character(str[i+1],delim) && str[i+1] != '\0')
+   if(non_delim_character(str[0], delim)){
+      count++;
+   }
+   for (int i = 1;str[i] != '\0';i++){
+      if (delim_character(str[i],delim) && non_delim_character(str[i+1],delim))
          count++;    
    }
    return count;
@@ -78,15 +81,16 @@ char** tokenize(char* str, char delim){
    int tokCount = count_tokens(str, delim);
    char** token = (char**) malloc((tokCount+1) * sizeof(char*));
    
-   if(str[0] == delim){
+   if(delim_character(str[0],delim)){
       str = word_start(str,delim);
    }
 
    for (int i = 0; i < tokCount; i++) {
-      for (int j = 0;str[j] != '\0';j++){
-         token[i] = copy_str(str, strlen(str), delim);
-         str = end_word(str,delim);
+      token[i] = copy_str(str, strlen(str), delim);
+      if(str[0] == '\0'){
+         break;
       }
+      str = end_word(str,delim);
       str = word_start(str,delim);
    }
    token[tokCount] = '\0';
@@ -94,14 +98,14 @@ char** tokenize(char* str, char delim){
 }
 
 void print_all_tokens(char** tokens){ 
-   for (int i = 0; *tokens[i] != '\0';i++){
-      printf("%s\n", *tokens[i]);
+   for (int i = 0; tokens[i] != '\0';i++){
+      printf("Token[%d] = %s\n", i, tokens[i]);
    }
 }
 
 int main()
 {
-   char input[] = ",,,Hello,,,";
+   char input[] = "Hello,World";
    char *pinput = input;
    char delim = ',';
    int count = count_tokens(pinput, delim);
@@ -113,4 +117,5 @@ int main()
    x = end_word(pinput, delim);
    printf("The delimeter is: %c\n",*x);
    printf("The number of tokens is %d\n", count);
+   print_all_tokens(tokenize(pinput, delim));
 }

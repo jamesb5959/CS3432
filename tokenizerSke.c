@@ -21,9 +21,10 @@ bool non_delim_character(char c, char delim){
    str does not contain any words.*/
 char *word_start(char* str,char delim){   
    char* firstChar = '\0';
-   for (int i = 0; str[i+1] != '\0'; i++){
+   for (int i = 0; str[i] != '\0'; i++){
       if(delim_character(str[i],delim) == true && non_delim_character(str[i+1],delim)){
          firstChar = &str[i+1];
+         break;
       }
    }
    return firstChar;
@@ -32,10 +33,11 @@ char *word_start(char* str,char delim){
 /* Returns a pointer to the first delimiter character of the zero
    terminated string*/
 char *end_word(char* str,char delim){
-   char* endWord;
+   char* endWord = '\0';
    for (int i = 0; str[i] != '\0'; i++){
       if(delim_character(str[i],delim)){
          endWord = &(str[i]);
+         break;
       }
    }
    return endWord;
@@ -44,12 +46,18 @@ char *end_word(char* str,char delim){
 /* Counts the number of words or tokens*/
 int count_tokens(char* str,char delim){
    int count = 0;
-   if(non_delim_character(str[0], delim)){
+   if(delim_character(str[0], delim)){
+      count++;
+      str = word_start(str, delim);
+   }
+   else{
       count++;
    }
-   for (int i = 1;str[i] != '\0';i++){
-      if (delim_character(str[i],delim) && non_delim_character(str[i+1],delim))
-         count++;    
+   str = end_word(str, delim);
+   for (int i = 0;i<strlen(str)-1;i++){
+      if (delim_character(str[i],delim) && non_delim_character(str[i+1],delim) && str[i] != '\0'){
+         count++;
+      }
    }
    return count;
 }
@@ -90,7 +98,6 @@ char** tokenize(char* str, char delim){
       if(str[0] == '\0'){
          break;
       }
-      str = end_word(str,delim);
       str = word_start(str,delim);
    }
    token[tokCount] = '\0';
@@ -109,8 +116,6 @@ int main()
    char *pinput = input;
    char delim = ',';
    int count = count_tokens(pinput, delim);
-   //printf("Please enter a delimiter char: \n");
-   //scanf("%d", &delim);
 
    char *x = word_start(pinput, delim);
    printf("The first letter is: %c\n",*x);
